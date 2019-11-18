@@ -4,7 +4,9 @@
 
 	<b-form @submit.prevent="handleSubmit">
 	  <b-form-group label="Your Name">
-		<b-form-input v-model="form.name"></b-form-input>
+		<b-form-input 
+			v-model="form.name"
+		></b-form-input>
 	  </b-form-group>
 
 	  <b-form-group label="Message">
@@ -29,7 +31,7 @@
 		>
 		  <b-td>{{ GuestBookEntry.name }}</b-td>
 		  <b-td>{{ GuestBookEntry.message }}</b-td>
-		  <b-td>{{ GuestBookEntry.timeStamp }}</b-td>
+		  <b-td>{{ GuestBookEntry.timeStamp | moment("HH:mm DD/MM/YYYY") }}</b-td>
 		</b-tr>
 	  </b-tbody>
 	</b-table-simple>
@@ -60,15 +62,17 @@ export default {
 
   methods: {
 	handleSubmit() {
-	  this.submitting = true;
+		this.submitting = true;
 
-	  this.addGuestBookEntry();
-
-	  this.form = {
-		name: "",
-		message: ""
-	  };
-	  this.submitting = false;
+		if (this.form.name !== "" && this.form.message !== "") {
+			this.addGuestBookEntry();
+			
+			this.form = {
+			name: "",
+			message: ""
+			};
+		}
+	  	this.submitting = false;
 	},
 
 	async getGuestBookEntries() {
@@ -96,7 +100,7 @@ export default {
 			}
 		);
 		const data = await response.json();
-		this.guestBookEntries = [...this.guestBookEntries, data];
+		this.guestBookEntries = [data, ...this.guestBookEntries];
 	  } catch (error) {
 		console.error(error);
 	  }
